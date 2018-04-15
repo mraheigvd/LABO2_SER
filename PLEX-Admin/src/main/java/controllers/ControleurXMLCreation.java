@@ -15,6 +15,11 @@ import java.text.SimpleDateFormat;
 import java.text.DecimalFormat;
 import java.util.*;
 
+/**
+ * @Author: Mentor Reka & Kamil Amrani
+ * @Brief: Write data into XML conforming to Labo1 definition
+ * @Date: 15.04.2018
+ */
 public class ControleurXMLCreation {
 
 	//private ControleurGeneral ctrGeneral;
@@ -22,7 +27,7 @@ public class ControleurXMLCreation {
 	private ORMAccess ormAccess;
 
 	private GlobalData globalData;
-	private static final String DATE_FORMAT = "dd-mm-yyyy - hh:mm";
+	private static final String DATE_FORMAT = "dd-MM-yyyy - hh:mm";
 
 
 	public ControleurXMLCreation(ControleurGeneral ctrGeneral, MainGUI mainGUI, ORMAccess ormAccess){
@@ -30,6 +35,7 @@ public class ControleurXMLCreation {
 		ControleurXMLCreation.mainGUI=mainGUI;
 		this.ormAccess=ormAccess;
 	}
+
 
 	public void createXML(){
 		new Thread(){
@@ -42,7 +48,9 @@ public class ControleurXMLCreation {
                     // Create the main element
 					Element racine = new Element("Main");
 
-					// On récupère la liste des projections selon les données
+					// Get projections, films and actors
+					// We will create a XML structure in a way that we will avoid
+					// the duplication of data
 					List<Projection> lstProjections = globalData.getProjections();
                     List<Film> lstFilms = new ArrayList<Film>();
                     List<Acteur> lstActeurs = new ArrayList<Acteur>();
@@ -54,6 +62,7 @@ public class ControleurXMLCreation {
                         }
                     }
 
+                    // Our main Elements after the Main element
                     Element projections = new Element("Projections");
                     Element acteurs = new Element("Acteurs");
                     Element films = new Element("Films");
@@ -65,8 +74,10 @@ public class ControleurXMLCreation {
                         acteur.addContent(new Element("Nom_Naissance").setText(a.getNomNaissance()));
                         acteur.addContent(new Element("Biographie").setText(a.getBiographie()));
                         acteur.addContent(new Element("Sexe").setText(a.getSexe().toString()));
-                        acteur.addContent(new Element("Date_Naissance").setText(a.getDateNaissance().toString()));
-                        acteur.addContent(new Element("Date_Deces").setText(a.getDateDeces().toString()));
+                        String dateNaissance = a.getDateNaissance() == null ? "" : a.getDateNaissance().toString();
+                        acteur.addContent(new Element("Date_Naissance").setText(dateNaissance));
+                        String dateDeces = a.getDateDeces() == null ? "" : a.getDateDeces().toString();
+                        acteur.addContent(new Element("Date_Deces").setText(dateDeces));
                         acteurs.addContent(acteur);
                     }
 
@@ -91,7 +102,10 @@ public class ControleurXMLCreation {
                         for (Genre g : f.getGenres()) {
                             Genres.addContent(new Element("Genre").setText(g.getLabel()));
                         }
-                        film.addContent(new Element("Photo").setAttribute("url", f.getPhoto()));
+
+                        // We can't set a null attribute
+                        if (f.getPhoto() != null)
+                        	film.addContent(new Element("Photo").setAttribute("url", f.getPhoto()));
 
                         Element Critiques = new Element("Critiques");
                         for (Critique c : f.getCritiques()) {
@@ -120,7 +134,7 @@ public class ControleurXMLCreation {
 					for (Projection p : lstProjections) {
                         Element projection = new Element("Projection");
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT);
-                        projection.addContent(new Element("Date").setText(simpleDateFormat.format(p.getDateHeure())));
+                        projection.addContent(new Element("Date").setText(simpleDateFormat.format(p.getDateHeure().getTime())));
                         projection.addContent(new Element("Salle").setText(p.getSalle().getNo()));
                         projection.addContent(new Element("Projection_Film").setAttribute(new Attribute("id", String.valueOf(p.getFilm().getId()))));
                         projections.addContent(projection);
@@ -130,13 +144,12 @@ public class ControleurXMLCreation {
                     racine.addContent(films);
                     racine.addContent(projections);
 
-
-					// Préparation à l'envoi selon le format indiqué
+					// Write xml file in a pretty format
 					XMLOutputter xmlOutputter = new XMLOutputter();
 					xmlOutputter.setFormat(Format.getPrettyFormat());
 
-					try {
-						xmlOutputter.output(racine, new FileWriter("SER_Labo2_PLEX_ADMIN.xml"));
+                    try {
+                        xmlOutputter.output(racine, new FileWriter("SER_Labo2_PLEX_ADMIN.xml"));
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -144,6 +157,7 @@ public class ControleurXMLCreation {
 					mainGUI.setAcknoledgeMessage("Le fichier XML a été créé en "+ displaySeconds(currentTime, System.currentTimeMillis()) );
 
 				} catch (Exception e){
+					e.printStackTrace();
 					mainGUI.setErrorMessage("Construction XML impossible", e.toString());
 				}
 			}
