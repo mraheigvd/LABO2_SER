@@ -81,6 +81,7 @@ public class ControleurMedia {
 				try {
 					globalData = ormAccess.GET_GLOBAL_DATA();
 
+
 					ProjectionsJSON  projections = new ProjectionsJSON();
 					List<ProjectionsJSON.ProjectionNode> lstProjection = new ArrayList<ProjectionsJSON.ProjectionNode>();
 

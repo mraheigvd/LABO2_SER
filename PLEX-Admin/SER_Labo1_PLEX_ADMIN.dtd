@@ -1,0 +1,60 @@
+<!ELEMENT Main (Acteurs, Films, Projections) >
+
+<!ELEMENT Acteurs (Acteur)*>
+<!ELEMENT Films (Film)*>
+<!ELEMENT Projections (Projection)*>
+
+<!-- Balise second niveau -->
+<!ELEMENT Acteur (Nom, Nom_Naissance, Biographie, Sexe, Date_Naissance, Date_Deces)>
+<!ELEMENT Film (Film_Acteurs, Titre, Synopsis, Duree, Genres, Photo, Critiques, Keywords, Langages)>
+<!ELEMENT Projection (Date, Salle, Projection_Film)>
+
+<!-- Balise Acteur -->
+<!ATTLIST Acteur id ID #REQUIRED>
+<!ELEMENT Nom  (#PCDATA)>
+<!ELEMENT Nom_Naissance  (#PCDATA)>
+<!ELEMENT Biographie  (#PCDATA)>
+<!ELEMENT Sexe  (#PCDATA)>
+<!ELEMENT Date_Naissance  (#PCDATA)>
+<!ELEMENT Date_Deces  (#PCDATA)>
+
+<!-- Balise Film -->
+<!ATTLIST Film id ID #REQUIRED>
+<!ELEMENT Film_Acteurs  (Film_Acteur)*>
+<!ELEMENT Titre  (#PCDATA)>
+<!ELEMENT Synopsis  (#PCDATA)>
+<!ELEMENT Duree  (#PCDATA)>
+<!ELEMENT Genres  (Genre)*>
+<!ELEMENT Photo EMPTY>
+<!ELEMENT Critiques  (Critique)*>
+<!ELEMENT Keywords  (Keyword)*>
+<!ELEMENT Langages  (Langage)*>
+
+<!ATTLIST Photo url CDATA #REQUIRED>
+
+<!-- Balise Film_Acteur -->
+<!ATTLIST Film_Acteur id IDREF #REQUIRED>
+<!ELEMENT Film_Acteur (Role_Nom, Role_Place)>
+
+<!-- Balise Film_Acteur -->
+<!ELEMENT Role_Nom  (#PCDATA) >
+<!ELEMENT Role_Place  (#PCDATA) >
+
+<!ELEMENT Genre  (#PCDATA)>
+
+<!-- Balise Critique, Keyword & Langage -->
+<!ELEMENT Critique  (Texte, Note)>
+<!ELEMENT Keyword  (#PCDATA)>
+<!ELEMENT Langage  (#PCDATA)>
+
+<!-- Balise Critique -->
+<!ELEMENT Texte  (#PCDATA)>
+<!ELEMENT Note  (#PCDATA)>
+
+<!-- Balise Projection -->
+<!ELEMENT Date  (#PCDATA) >
+<!ELEMENT Salle  (#PCDATA) >
+<!ELEMENT Projection_Film EMPTY>
+<!ATTLIST Projection_Film id IDREF #REQUIRED>
+
+
